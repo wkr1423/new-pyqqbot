@@ -17,18 +17,6 @@ class Message:
     def generate(self): ...
 
 
-'''{
-    "type": "Quote",
-    "id": 123456,
-    "groupId": 123456789,
-    "senderId": 987654321,
-    "targetId": 9876543210,
-    "origin": [
-        { "type": "Plain", text: "text" }
-    ] 
-}'''
-
-
 class Quote(Message):
     """
     回复消息
@@ -36,7 +24,7 @@ class Quote(Message):
     type: 回复消息所在的地方，“friend”或者“group” str
     fromId: 被引用回复的原消息的发送者的QQ号 int
     toId: 被引用回复的原消息的接收者者的QQ号（或群号） int
-    origin: 原消息内容 list
+    origin: 原消息内容 本文件中所涉及到的各种class[]（除了那些你在客户端发不了的消息节点）
     """
 
     def __init__(self):
@@ -211,6 +199,11 @@ class Face(Message):
 
 
 class Plain(Message):
+    """
+    纯文本
+    text:消息内容 str
+    """
+
     def __init__(self):
         super(Plain, self).__init__()
         self.text = None
@@ -239,23 +232,15 @@ class Plain(Message):
         return data
 
 
-"""{
-    "type": "Image",
-    "imageId": "{01E9451B-70ED-EAE3-B37C-101F1EEBF5B5}.mirai",  //群图片格式
-    //"imageId": "/f8f1ab55-bf8e-4236-b55e-955848d7069f"      //好友图片格式
-    "url": "https://xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
-    "path": null,
-    "base64": null
-}
-imageId	String	图片的imageId，群图片与好友图片格式不同。不为空时将忽略url属性
-url	String	图片的URL，发送时可作网络图片的链接；接收时为腾讯图片服务器的链接，可用于图片下载
-path	String	图片的路径，发送本地图片，路径相对于 JVM 工作路径（默认是当前路径，可通过 -Duser.dir=...指定），也可传入绝对路径。
-base64	String	图片的 Base64 编码
-三个参数任选其一，出现多个参数时，按照voiceId > url > path > base64的优先级
-"""
-
-
 class Image(Message):
+    """
+    图片
+    imageId:图片的imageId，群图片与好友图片格式不同。不为空时将忽略url属性 str
+    url:图片的URL，发送时可作网络图片的链接；接收时为腾讯图片服务器的链接，可用于图片下载 str
+    path:图片的路径，发送本地图片，路径相对于 JVM 工作路径（默认是当前路径，可通过 -Duser.dir=...指定），也可传入绝对路径 str
+    base64: 图片的 Base64 编码 str
+    四选一
+    """
 
     def __init__(self):
         super(Image, self).__init__()
@@ -316,20 +301,16 @@ class Image(Message):
         return data
 
 
-"""
-{
-    "type": "FlashImage",
-    "imageId": "{01E9451B-70ED-EAE3-B37C-101F1EEBF5B5}.mirai",  //群图片格式
-    //"imageId": "/f8f1ab55-bf8e-4236-b55e-955848d7069f"      //好友图片格式
-    "url": "https://xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
-    "path": null,
-    "base64": null
-}
-三个参数任选其一，出现多个参数时，按照voiceId > url > path > base64的优先级
-"""
-
-
 class FlashImage(Image):
+    """
+    闪照
+    imageId:图片的imageId，群图片与好友图片格式不同。不为空时将忽略url属性 str
+    url:图片的URL，发送时可作网络图片的链接；接收时为腾讯图片服务器的链接，可用于图片下载 str
+    path:图片的路径，发送本地图片，路径相对于 JVM 工作路径（默认是当前路径，可通过 -Duser.dir=...指定），也可传入绝对路径 str
+    base64: 图片的 Base64 编码 str
+    四选一
+    """
+
     def __init__(self):
         super(FlashImage, self).__init__()
 
@@ -347,25 +328,16 @@ class FlashImage(Image):
         return data
 
 
-"""
-{
-    "type": "Voice",
-    "voiceId": "23C477720A37FEB6A9EE4BCCF654014F.amr",
-    "url": "https://xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
-    "path": null,
-    "base64": null,
-    "length": 1024,
-}
-voiceId	String	语音的voiceId，不为空时将忽略url属性
-url	String	语音的URL，发送时可作网络语音的链接；接收时为腾讯语音服务器的链接，可用于语音下载
-path	String	语音的路径，发送本地语音，路径相对于 JVM 工作路径（默认是当前路径，可通过 -Duser.dir=...指定），也可传入绝对路径。
-base64	String	语音的 Base64 编码
-length	Long	返回的语音长度, 发送消息时可以不传
-三个参数任选其一，出现多个参数时，按照voiceId > url > path > base64的优先级
-"""
-
-
 class Voice(Message):
+    """
+    声音
+    voiceId：语音的voiceId，不为空时将忽略url属性 str
+    url:语音的URL，发送时可作网络语音的链接；接收时为腾讯语音服务器的链接，可用于语音下载 str
+    path:语音的路径，发送本地语音，路径相对于 JVM 工作路径（默认是当前路径，可通过 -Duser.dir=...指定），也可传入绝对路径 str
+    base64:语音的 Base64 编码 str
+    length:返回的语音长度, 发送消息时可以不传 int
+    三个参数任选其一
+    """
 
     def __init__(self):
         super(Voice, self).__init__()
@@ -426,16 +398,12 @@ class Voice(Message):
         return data
 
 
-"""
-{
-    "type": "Xml",
-    "xml": "XML"
-}
-xml	String	XML文本
-"""
-
-
 class Xml(Message):
+    """
+    XML消息
+    xml： XML文本 str
+    """
+
     def __init__(self):
         super(Xml, self).__init__()
         self.xml = None
@@ -464,16 +432,12 @@ class Xml(Message):
         return data
 
 
-"""
-{
-    "type": "Json",
-    "json": "{}"
-}
-json	String	Json文本
-"""
-
-
 class Json(Message):
+    """
+    JSON消息
+    json： Json文本 str
+    """
+
     def __init__(self):
         super(Json, self).__init__()
         self.json = None
@@ -502,16 +466,12 @@ class Json(Message):
         return data
 
 
-"""
-{
-    "type": "App",
-    "content": "<>"
-}
-content	String	内容
-"""
-
-
 class App(Message):
+    """
+    应用类型消息
+    content： 内容 str
+    """
+
     def __init__(self):
         super(App, self).__init__()
         self.content = None
@@ -540,22 +500,20 @@ class App(Message):
         return data
 
 
-"""
-{
-    "type": "Poke",
-    "name": "SixSixSix"
-}
-name	String	戳一戳的类型
-"Poke": 戳一戳
-"ShowLove": 比心
-"Like": 点赞
-"Heartbroken": 心碎
-"SixSixSix": 666
-"FangDaZhao": 放大招
-"""
-
-
 class Poke(Message):
+    """
+    戳一戳
+    name: 戳一戳的类型 str
+    其可能的值如下：
+    Poke: 戳一戳
+    ShowLove: 比心
+    Like:点赞
+    Heartbroken：心碎
+    SixSixSix：666
+    FangDaZhao：放大招
+    ...
+    """
+
     def __init__(self):
         super(Poke, self).__init__()
         self.name = None
@@ -584,15 +542,12 @@ class Poke(Message):
         return data
 
 
-"""
-{
-  "type": "Dice",
-  "value": 1
-}
-"""
-
-
 class Dice(Message):
+    """
+    骰子
+    value： 1 int
+    """
+
     def __init__(self):
         super(Dice, self).__init__()
         self.value = None
@@ -621,19 +576,13 @@ class Dice(Message):
         return data
 
 
-"""
-{
-  "type": "MarketFace",
-  "id": 123,
-  "name": "商城表情"
-}
-id	Int	商城表情唯一标识
-name	String	表情显示名称
-目前商城表情仅支持接收和转发，不支持构造发送
-"""
-
-
 class MarketFace(Message):
+    """
+    商城表情
+    id: 商城表情唯一标识 int
+    name:表情显示名称 str
+    """
+
     def __init__(self):
         super(MarketFace, self).__init__()
         self.id = None
@@ -666,28 +615,18 @@ class MarketFace(Message):
         return data
 
 
-"""
-{
-  "type": "MusicShare",
-  "kind": "String",
-  "title": "String",
-  "summary": "String",
-  "jumpUrl": "String",
-  "pictureUrl": "String",
-  "musicUrl": "String",
-  "brief": "String"
-}
-kind	String	类型
-title	String	标题
-summary	String	概括
-jumpUrl	String	跳转路径
-pictureUrl	String	封面路径
-musicUrl	String	音源路径
-brief	String	简介
-"""
-
-
 class MusicShare(Message):
+    """
+    音乐分享
+    kind： 类型 str
+    title：标题 str
+    summary：概括 str
+    jumpUrl：跳转路径 str
+    pictureUrl： 封面路径 str
+    musicUrl：音源路径 str
+    brief：简介 str
+    """
+
     def __init__(self):
         super(MusicShare, self).__init__()
         self.kind = None
@@ -740,30 +679,17 @@ class MusicShare(Message):
         return data
 
 
-"""
-{
-  "senderId": 123,
-  "time": 0,
-  "senderName": "sender name",
-  "messageChain": [],
-  "messageId": 123,
-  "messageRef": {
-    "messageId": 123,
-    "target": 321,
-  }
-}
-senderId	Long	发送人QQ号
-time	Int	发送时间
-senderName	String	显示名称
-messageChain	Array	消息数组
-messageId	Int	可以只使用消息messageId，从当前对话上下文缓存中读取一条消息作为节点
-messageRef	object	引用缓存中其他对话上下文的消息作为节点
-messageRef.messageId	Int	引用的 messageId
-messageRef.target	Int	引用的上下文目标，群号、好友账号
-"""
-
-
 class MessageNode(Message):
+    """
+    消息节点
+    senderId：发送人QQ号 int
+    time:发送时间 int
+    senderName:显示名称 str
+    messageChain:消息数组 本文件中所涉及到的各种class[]（除了那些你在客户端发不了的消息节点）
+    messageId: 可以只使用消息messageId，从当前对话上下文缓存中读取一条消息作为节点 int
+    target:引用的上下文目标，群号、好友账号 int
+    """
+
     def __init__(self):
         super(MessageNode, self).__init__()
         self.senderId = None
@@ -825,44 +751,10 @@ class MessageNode(Message):
         return data
 
 
-"""
-{
-  "type": "Forward",
-  "nodeList": [
-    {
-      "senderId": 123,
-      "time": 0,
-      "senderName": "sender name",
-      "messageChain": [],
-      "messageId": 123,
-      "messageRef": {
-        "messageId": 123,
-        "target": 321,
-      }
-    }
-  ] 
-}
-nodeList	object	消息节点
-senderId	Long	发送人QQ号
-time	Int	发送时间
-senderName	String	显示名称
-messageChain	Array	消息数组
-messageId	Int	可以只使用消息messageId，从当前对话上下文缓存中读取一条消息作为节点
-messageRef	object	引用缓存中其他对话上下文的消息作为节点
-messageRef.messageId	Int	引用的 messageId
-messageRef.target	Int	引用的上下文目标，群号、好友账号
-(senderId, time, senderName, messageChain), messageId, messageRef 是三种不同构造引用节点的方式，选其中一个/组传参即可
-"""
-
-
 class Forward(Message):
     """
-    回复消息
-    messageId: 被引用回复的原消息的messageId int
-    type: 回复消息所在的地方，“friend”或者“group” str
-    fromId: 被引用回复的原消息的发送者的QQ号 int
-    toId: 被引用回复的原消息的接收者者的QQ号（或群号） int
-    origin: 原消息内容 list
+    转发
+    nodeList：消息节点  MessageNode[]
     """
 
     def __init__(self):
@@ -897,20 +789,14 @@ class Forward(Message):
         return data
 
 
-"""
-{
-  "type": "File",
-  "id": "",
-  "name": "",
-  "size": 0
-}
-id	String	文件识别id
-name	String	文件名
-size	Long	文件大小
-"""
-
-
 class File(Message):
+    """
+    文件
+    id：文件识别id str
+    name:文件名 str
+    size:文件大小 int
+    """
+
     def __init__(self):
         super(File, self).__init__()
         self.id = None
@@ -947,16 +833,12 @@ class File(Message):
         return data
 
 
-"""
-{
-  "type": "MiraiCode",
-  "code": "hello[mirai:at:1234567]"
-}
-code	String	MiraiCode
-"""
-
-
 class MiraiCode(Message):
+    """
+    MiraiCode
+    code:MiraiCode str
+    """
+
     def __init__(self):
         super(MiraiCode, self).__init__()
         self.code = None
