@@ -1,19 +1,25 @@
 import hashlib
 import inspect
 import os.path
-import ctypes
-from settings import PATH_BLACKLIST
+import threading
+import time
+
+from settings import PATH_BLACKLIST, LOGGER
 
 
 def getClasses(arg):
-    classes = []
-    classMembers = inspect.getmembers(arg, inspect.isclass)
-    for (name, cls) in classMembers:
-        classes.append((cls, name))
+    # 获取文件下所有的class
+    classes = inspect.getmembers(arg, inspect.isclass)
+    LOGGER.debug(classes)
     return classes
 
 
-def removeMiscPath(paths: list):
+def removeMiscPath(paths: list) -> list:
+    """
+    移除给出文件列表中的黑名单内容
+    :param paths: 路径列表
+    :return: paths
+    """
     for blockedPath in PATH_BLACKLIST:
         while paths.count(blockedPath):
             paths.remove(blockedPath)
@@ -22,6 +28,7 @@ def removeMiscPath(paths: list):
 
 
 def removeDirs(basedir: str, paths: list):
+    # 移除路径中的所有文件夹
     for pathId in range(len(paths)):
         if os.path.isdir(os.path.join(basedir, paths[pathId])):
             paths[pathId] = ""
@@ -36,28 +43,19 @@ def mkdir(path):
         os.mkdir(path)
 
 
-def _async_raise(tid, exctype):
-    """raises the exception, performs cleanup if needed"""
-    tid = ctypes.c_long(tid)
-    if not inspect.isclass(exctype):
-        exctype = type(exctype)
-    res = ctypes.pythonapi.PyThreadState_SetAsyncExc(tid, ctypes.py_object(exctype))
-    if res == 0:
-        raise ValueError("invalid thread id")
-    elif res != 1:
-        # """if it returns a number greater than one, you're in trouble,
-        # and you should call it again with exc=NULL to revert the effect"""
-        ctypes.pythonapi.PyThreadState_SetAsyncExc(tid, None)
-        raise SystemError("PyThreadState_SetAsyncExc failed")
-
-
-def stopThread(thread):
-    _async_raise(thread.ident, SystemExit)
-
-
 def getFileMD5(filepath):
     with open(filepath, 'rb') as f:
         md5obj = hashlib.md5()
         md5obj.update(f.read())
         md5 = md5obj.hexdigest()
         return md5
+
+
+def startFunc(func, work, args):
+    thread = threading.Thread(target=func, args=args)
+    work.append(thread)
+    LOGGER.debug(f"work {str(thread)} started")
+    thread.start()
+    while thread.is_alive():
+        time.sleep(1)
+    work.remove(thread)

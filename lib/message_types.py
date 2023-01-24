@@ -1,3 +1,4 @@
+import json
 import sys
 
 from settings import LOGGER
@@ -453,7 +454,7 @@ class Json(Message):
         if self.isBuilt:
             LOGGER.warning("禁止重复构建，这会让你的代码可读性变差")
             return -1
-        self.json = data["json"]
+        self.json = json.loads(data["json"])
         self.isBuilt = True
 
     def generate(self):
@@ -461,7 +462,7 @@ class Json(Message):
             raise ValueError("对象未被构造")
         data = {
             "type": "Json",
-            "json": self.json
+            "json": json.dumps(self.json)
         }
         return data
 
