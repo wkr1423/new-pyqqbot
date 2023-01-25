@@ -4,6 +4,10 @@
 
 PYQQBOT 是一个用 python 实现的、基于[MIRAI](https://github.com/mamoe/mirai)协议的 QQ 机器人，可运行在 Linux, Windows 和 Mac OSX 平台下。
 
+依赖列表如下：
++ [mirai-api-http](https://github.com/project-mirai/mirai-api-http)
++ [MIRAI](https://github.com/mamoe/mirai)
+
 本项目 github 地址： <https://github.com/wkr1423/new-pyqqbot>
 
 你可以通过扩展 qqbot 来实现：
